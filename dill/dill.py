@@ -164,11 +164,20 @@ PartialType = type(partial(int,base=2))
 SuperType = type(super(Exception, TypeError()))
 ItemGetterType = type(itemgetter(0))
 AttrGetterType = type(attrgetter('__repr__'))
-FileType = type(open(os.devnull, 'rb', buffering=0))
-TextWrapperType = type(open(os.devnull, 'r', buffering=-1))
-BufferedRandomType = type(open(os.devnull, 'r+b', buffering=-1))
-BufferedReaderType = type(open(os.devnull, 'rb', buffering=-1))
-BufferedWriterType = type(open(os.devnull, 'wb', buffering=-1))
+try:
+  FileType = type(open(os.devnull, 'rb', buffering=0))
+  TextWrapperType = type(open(os.devnull, 'r', buffering=-1))
+  BufferedRandomType = type(open(os.devnull, 'r+b', buffering=-1))
+  BufferedReaderType = type(open(os.devnull, 'rb', buffering=-1))
+  BufferedWriterType = type(open(os.devnull, 'wb', buffering=-1))
+except IOError:
+  OTHER_FILE='app.yaml'
+  FileType = type(open(OTHER_FILE, 'rb', buffering=0))
+  TextWrapperType = type(open(OTHER_FILE, 'r', buffering=-1))
+  BufferedRandomType = type(open(OTHER_FILE, 'r+b', buffering=-1))
+  BufferedReaderType = type(open(OTHER_FILE, 'rb', buffering=-1))
+  BufferedWriterType = type(open(OTHER_FILE, 'wb', buffering=-1))
+
 try:
     from _pyio import open as _open
     PyTextWrapperType = type(_open(os.devnull, 'r', buffering=-1))
