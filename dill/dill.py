@@ -172,11 +172,11 @@ try:
   BufferedWriterType = type(open(os.devnull, 'wb', buffering=-1))
 except IOError:
   OTHER_FILE='app.yaml'
-  FileType = type(open(OTHER_FILE, 'rb', buffering=0))
-  TextWrapperType = type(open(OTHER_FILE, 'r', buffering=-1))
-  BufferedRandomType = type(open(OTHER_FILE, 'r+b', buffering=-1))
-  BufferedReaderType = type(open(OTHER_FILE, 'rb', buffering=-1))
-  BufferedWriterType = type(open(OTHER_FILE, 'wb', buffering=-1))
+  FileType = type(open(OTHER_FILE, 'rb'))
+  TextWrapperType = type(open(OTHER_FILE, 'r'))
+  BufferedRandomType = type(open(OTHER_FILE, 'rb'))
+  BufferedReaderType = type(open(OTHER_FILE, 'rb'))
+  BufferedWriterType = type(open(OTHER_FILE, 'rb'))
 
 try:
     from _pyio import open as _open
@@ -186,6 +186,9 @@ try:
     PyBufferedWriterType = type(_open(os.devnull, 'wb', buffering=-1))
 except ImportError:
     PyTextWrapperType = PyBufferedRandomType = PyBufferedReaderType = PyBufferedWriterType = None
+except IOError:
+    PyTextWrapperType = PyBufferedRandomType = PyBufferedReaderType = PyBufferedWriterType = None
+
 try:
     from cStringIO import StringIO, InputType, OutputType
 except ImportError:
@@ -275,7 +278,7 @@ def load(file):
     pik = Unpickler(file)
     pik._main = _main_module
     obj = pik.load()
-    if type(obj).__module__ == _main_module.__name__: # point obj class to main
+    if hasattr(_main_module, '__name__') and type(obj).__module__ == _main_module.__name__: # point obj class to main
         try: obj.__class__ == getattr(pik._main, type(obj).__name__)
         except AttributeError: pass # defined in a file
    #_main_module.__dict__.update(obj.__dict__) #XXX: should update globals ?
